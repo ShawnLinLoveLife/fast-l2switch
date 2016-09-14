@@ -1,0 +1,56 @@
+module fast-app-l2switch-impl {
+    yang-version 1;
+    namespace "urn:fast:app:l2switch:impl";
+    prefix "fast-app-l2switch-impl";
+
+    import config {
+        prefix config;
+        revision-date 2013-04-05;
+    }
+
+    import opendaylight-md-sal-binding {
+        prefix mdsal;
+        revision-date 2013-10-28;
+    }
+
+    import fast-system {
+        prefix fast-system;
+        revision-date 2015-12-17;
+    }
+
+    description
+        "A new FAST application";
+
+    revision "2016-09-02" {
+        description
+            "Initial revision";
+    }
+
+    identity fast-app-l2switch {
+        base config:module-type;
+        config:java-name-prefix L2switch;
+    }
+
+    augment "/config:modules/config:module/config:configuration" {
+        case fast-app-l2switch {
+            when "/config:modules/config:module/config:type = 'fast-app-l2switch'";
+            container fast-system {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity fast-system:fast-system;
+                    }
+                }
+            }
+
+            container broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-broker-osgi-registry;
+                    }
+                }
+            }
+        }
+    }
+}
